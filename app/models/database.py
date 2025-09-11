@@ -19,7 +19,7 @@ class Database:
             # Создаем асинхронный движок для работы с БД
             self.engine = create_async_engine(
                 config.DATABASE_URL,
-                echo=False,  # Включаем для отладки SQL запросов
+                echo=False,  # Включаем True для отладки SQL запросов
                 future=True
             )
             
@@ -42,12 +42,7 @@ class Database:
         """Получение асинхронной сессии для работы с БД"""
         if not self.async_session:
             await self.init()
-        
-        async with self.async_session() as session:
-            try:
-                yield session
-            finally:
-                await session.close()
+        return self.async_session()
     
     async def close(self):
         """Закрытие соединения с базой данных"""

@@ -24,12 +24,22 @@ def generate_csv_data(users: list) -> io.StringIO:
         
         # Записываем данные пользователей
         for user in users:
+            created_at = user.created_at
+            if created_at:
+                # Преобразуем в строку
+                if hasattr(created_at, 'strftime'):
+                    created_at_str = created_at.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    created_at_str = str(created_at)
+            else:
+                created_at_str = 'N/A'
+            
             writer.writerow([
                 user.user_id,
                 user.username or 'N/A',
                 user.first_name or 'N/A',
                 user.gift_code or 'N/A',
-                user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else 'N/A'
+                created_at_str
             ])
         
         # Перемещаем указатель в начало
@@ -38,4 +48,9 @@ def generate_csv_data(users: list) -> io.StringIO:
     
     except Exception as e:
         logger.error(f"Ошибка при генерации CSV: {e}")
-        raise
+        # Возвращаем пустой StringIO в случае ошибки
+        empty_output = io.StringIO()
+        writer = csv.writer(empty_output)
+        writer.writerow(['Error', 'Failed to generate CSV data'])
+        empty_output.seek(0)
+        return empty_output

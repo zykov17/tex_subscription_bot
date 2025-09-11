@@ -1,9 +1,9 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, BufferedInputFile
 from aiogram.filters import Command
 from aiogram.exceptions import TelegramAPIError
 import logging
-import io
+from datetime import datetime
 
 from config import config
 from app.keyboards.inline_kb import create_admin_keyboard
@@ -16,10 +16,12 @@ logger = logging.getLogger(__name__)
 # Создаем роутер для административных handlers
 admin_router = Router()
 
+
 # Фильтр для проверки прав администратора
 def is_admin(user_id: int) -> bool:
     """Проверяет, является ли пользователь администратором"""
     return config.ADMIN_ID and user_id == config.ADMIN_ID
+
 
 @admin_router.message(Command("admin"))
 async def cmd_admin(message: Message):
@@ -36,6 +38,7 @@ async def cmd_admin(message: Message):
         reply_markup=create_admin_keyboard()
     )
 
+
 @admin_router.callback_query(F.data == "admin_stats")
 async def admin_stats_callback(callback: CallbackQuery):
     """
@@ -46,9 +49,10 @@ async def admin_stats_callback(callback: CallbackQuery):
         return
     
     try:
-        async for session in db.get_session():
+        session = await db.get_session()
+        try:
             users = await get_all_recipients(session)
-            
+
             await callback.message.edit_text(
                 f"📊 Статистика подарков:\n\n"
                 f"• Всего выдано: {len(users)} подарков\n"
@@ -56,12 +60,15 @@ async def admin_stats_callback(callback: CallbackQuery):
                 "Для экспорта данных нажмите кнопку ниже:",
                 reply_markup=create_admin_keyboard()
             )
-        
+        finally:
+            await session.close()
+
         await callback.answer()
     
     except Exception as e:
         logger.error(f"Ошибка при получении статистики: {e}")
         await callback.answer("⚠️ Ошибка при получении статистики")
+
 
 @admin_router.callback_query(F.data == "admin_export")
 async def admin_export_callback(callback: CallbackQuery):
@@ -73,27 +80,33 @@ async def admin_export_callback(callback: CallbackQuery):
         return
     
     try:
-        async for session in db.get_session():
+        session = await db.get_session()
+        try:
             users = await get_all_recipients(session)
-            
+
             if not users:
                 await callback.message.answer("📭 Нет данных для экспорта.")
                 await callback.answer()
                 return
-            
+
             # Генерируем CSV данные
-            csv_data = generate_csv_data(users)
-            
-            # Создаем файл для отправки
-            csv_file = io.BytesIO(csv_data.getvalue().encode())
-            csv_file.name = f"gift_recipients_{len(users)}.csv"
-            
+            csv_string_io = generate_csv_data(users)
+            csv_content = csv_string_io.getvalue()
+
+            # Создаем BufferedInputFile из содержимого CSV
+            csv_file = BufferedInputFile(
+                file=csv_content.encode("utf-8"),
+                filename=f"gift_recipients_{len(users)}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            )
+
             # Отправляем файл
             await callback.message.answer_document(
                 document=csv_file,
                 caption=f"📁 Экспорт данных\nВыдано подарков: {len(users)}"
             )
-        
+        finally:
+            await session.close()
+
         await callback.answer("✅ Данные экспортированы")
     
     except Exception as e:
