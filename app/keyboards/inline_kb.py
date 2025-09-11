@@ -32,3 +32,21 @@ def create_admin_keyboard() -> InlineKeyboardMarkup:
         ]
     ])
     return keyboard
+
+def create_contacts_keyboard() -> InlineKeyboardMarkup:
+    """
+    Создает клавиатуру контактов
+    """
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="📢 Перейти в канал", 
+                url=f"https://t.me/{config.CHANNEL_ID.lstrip('@')}"
+            ),
+            InlineKeyboardButton(
+                text = "📢 Перейти на сайт", 
+                url = config.SITE_URL
+            ),
+        ]
+    ])
+    return keyboard

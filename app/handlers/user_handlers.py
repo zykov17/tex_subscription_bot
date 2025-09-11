@@ -5,7 +5,7 @@ from aiogram.exceptions import TelegramAPIError
 import logging
 
 from config import config
-from app.keyboards.inline_kb import create_subscription_keyboard
+from app.keyboards.inline_kb import create_subscription_keyboard, create_contacts_keyboard
 from app.services.subscription import check_subscription
 from app.services.gift_service import has_received_gift, save_gift_recipient, get_gift_content
 from app.models.database import db
@@ -33,7 +33,7 @@ async def cmd_start(message: Message):
             if await has_received_gift(session, user_id):
                 await message.answer(
                     "🎁 Вы уже получали подарок ранее! Спасибо за участие!",
-                    reply_markup=None
+                    reply_markup=create_contacts_keyboard()
                 )
                 return
 

@@ -22,6 +22,9 @@ class Config:
     if ADMIN_ID:
         ADMIN_ID = int(ADMIN_ID)
 
+    # URL сайта
+    SITE_URL = os.getenv('SITE_URL')
+
     # URL для подключения к базе данных
     DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite+aiosqlite://data/database.db')
 
