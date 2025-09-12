@@ -78,6 +78,14 @@ async def check_subscription_callback(callback: CallbackQuery):
         # Получаем сессию
         session = await db.get_session()
         try:
+            # Проверяем, получал ли пользователь подарок ранее
+            if await has_received_gift(session, user_id):
+                await callback.message.answer(
+                    "🎁 Вы уже получали подарок ранее! Спасибо за участие!",
+                    reply_markup=create_contacts_keyboard()
+                )
+                return
+
             # Проверяем подписку
             is_subscribed = await check_subscription(callback.bot, user_id)
 
