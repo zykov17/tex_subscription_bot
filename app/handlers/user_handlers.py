@@ -47,9 +47,10 @@ async def cmd_start(message: Message):
                 # Если не подписан - просим подписаться
                 await message.answer(
                     f"👋 Привет, {first_name}!\n\n"
-                    f"Чтобы получить подарок, подпишитесь на наш канал: {config.CHANNEL_USERNAME}\n\n"
+                    f"Чтобы получить подарок, подпишитесь на наш канал: <a href='https://t.me/{config.CHANNEL_USERNAME}'>Текстилия</a>\n\n"
                     "После подписки нажмите кнопку ниже для проверки:",
-                    reply_markup=create_subscription_keyboard()
+                    reply_markup=create_subscription_keyboard(),
+                    parse_mode="HTML"
                 )
         finally:
             await session.close()
