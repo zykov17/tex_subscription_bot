@@ -81,10 +81,11 @@ async def check_subscription_callback(callback: CallbackQuery):
                 await handle_gift_delivery(callback.message, session, user_id, username, first_name)
             else:
                 # Если все еще не подписан - просим подписаться снова
-                await callback.message.edit_text(
+                await callback.message.answer(
                     "❌ Вы еще не подписались на канал.\n\n"
-                    f"Пожалуйста, подпишитесь на {config.CHANNEL_USERNAME} и нажмите проверку снова:",
-                    reply_markup=create_subscription_keyboard()
+                    f"Пожалуйста, подпишитесь на канал <a href='https://t.me/{config.CHANNEL_USERNAME}'>Текстилия</a> и нажмите проверку снова:",
+                    reply_markup=create_subscription_keyboard(),
+                    parse_mode="HTML"
                 )
         finally:
             await session.close()
