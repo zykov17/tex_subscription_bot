@@ -17,6 +17,12 @@ def create_subscription_keyboard() -> InlineKeyboardMarkup:
                 text="✅ Я подписался! Проверить",
                 callback_data="check_subscription"
             )
+        ],
+        [
+            InlineKeyboardButton(
+                text="💬 Написать менеджеру",
+                url=f"https://t.me/{config.MANAGER_BOT_USERNAME.lstrip('@')}"
+            )
         ]
     ])
     return keyboard
@@ -43,10 +49,18 @@ def create_contacts_keyboard() -> InlineKeyboardMarkup:
                 text="📢 Перейти в канал",
                 url=f"https://t.me/{config.CHANNEL_USERNAME.lstrip('@')}"
             ),
+        ],
+        [
             InlineKeyboardButton(
-                text = "📢 Перейти на сайт",
+                text = "🌐 Перейти на сайт",
                 url = config.SITE_URL
             ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="💬 Написать менеджеру",
+                url=f"https://t.me/{config.MANAGER_BOT_USERNAME.lstrip('@')}"
+            )
         ]
     ])
     return keyboard

@@ -22,6 +22,11 @@ class Config:
     if not CHANNEL_USERNAME:
         raise ValueError("CHANNEL_USERNAME не найден в переменных окружения")
 
+    # username бота для ссылки на менеджеров
+    MANAGER_BOT_USERNAME = os.getenv("MANAGER_BOT_USERNAME")
+    if not MANAGER_BOT_USERNAME:
+        raise ValueError("MANAGER_BOT_USERNAME не найден в переменных окружения")
+
     # ID администратора для доступа к админ-панели
     ADMIN_ID = os.getenv('ADMIN_ID')
     if ADMIN_ID:
