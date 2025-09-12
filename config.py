@@ -27,10 +27,12 @@ class Config:
     if not MANAGER_BOT_USERNAME:
         raise ValueError("MANAGER_BOT_USERNAME не найден в переменных окружения")
 
-    # ID администратора для доступа к админ-панели
-    ADMIN_ID = os.getenv('ADMIN_ID')
-    if ADMIN_ID:
-        ADMIN_ID = int(ADMIN_ID)
+    # ID администраторов для доступа к админ-панели
+    ADMIN_IDS = os.getenv('ADMIN_IDS')
+    if ADMIN_IDS:
+        ADMIN_IDS = [int(admin_id.strip()) for admin_id in ADMIN_IDS.split(",")]
+    else:
+        ADMIN_IDS = []
 
     # URL сайта
     SITE_URL = os.getenv('SITE_URL')

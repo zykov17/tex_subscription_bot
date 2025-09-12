@@ -20,7 +20,7 @@ admin_router = Router()
 # Фильтр для проверки прав администратора
 def is_admin(user_id: int) -> bool:
     """Проверяет, является ли пользователь администратором"""
-    return config.ADMIN_ID and user_id == config.ADMIN_ID
+    return user_id in config.ADMIN_IDS
 
 
 @admin_router.message(Command("admin"))
@@ -31,7 +31,7 @@ async def cmd_admin(message: Message):
     if not is_admin(message.from_user.id):
         await message.answer("⛔ У вас нет прав доступа к админ-панели.")
         return
-    
+
     await message.answer(
         "👨‍💻 Панель администратора\n\n"
         "Выберите действие:",
@@ -47,7 +47,7 @@ async def admin_stats_callback(callback: CallbackQuery):
     if not is_admin(callback.from_user.id):
         await callback.answer("⛔ Нет прав доступа")
         return
-    
+
     try:
         session = await db.get_session()
         try:
@@ -64,7 +64,7 @@ async def admin_stats_callback(callback: CallbackQuery):
             await session.close()
 
         await callback.answer()
-    
+
     except Exception as e:
         logger.error(f"Ошибка при получении статистики: {e}")
         await callback.answer("⚠️ Ошибка при получении статистики")
@@ -78,7 +78,7 @@ async def admin_export_callback(callback: CallbackQuery):
     if not is_admin(callback.from_user.id):
         await callback.answer("⛔ Нет прав доступа")
         return
-    
+
     try:
         session = await db.get_session()
         try:
@@ -108,7 +108,7 @@ async def admin_export_callback(callback: CallbackQuery):
             await session.close()
 
         await callback.answer("✅ Данные экспортированы")
-    
+
     except Exception as e:
         logger.error(f"Ошибка при экспорте данных: {e}")
         await callback.answer("⚠️ Ошибка при экспорте данных")
