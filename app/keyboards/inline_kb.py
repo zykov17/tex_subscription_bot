@@ -8,13 +8,13 @@ def create_subscription_keyboard() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
-                text="📢 Подписаться на канал", 
-                url=f"https://t.me/{config.CHANNEL_ID.lstrip('@')}"
+                text="📢 Подписаться на канал",
+                url=f"https://t.me/{config.CHANNEL_USERNAME.lstrip('@')}"
             )
         ],
         [
             InlineKeyboardButton(
-                text="✅ Я подписался! Проверить", 
+                text="✅ Я подписался! Проверить",
                 callback_data="check_subscription"
             )
         ]
@@ -40,11 +40,11 @@ def create_contacts_keyboard() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
-                text="📢 Перейти в канал", 
-                url=f"https://t.me/{config.CHANNEL_ID.lstrip('@')}"
+                text="📢 Перейти в канал",
+                url=f"https://t.me/{config.CHANNEL_USERNAME.lstrip('@')}"
             ),
             InlineKeyboardButton(
-                text = "📢 Перейти на сайт", 
+                text = "📢 Перейти на сайт",
                 url = config.SITE_URL
             ),
         ]
