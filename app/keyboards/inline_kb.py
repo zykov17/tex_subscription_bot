@@ -14,7 +14,7 @@ def create_subscription_keyboard() -> InlineKeyboardMarkup:
         ],
         [
             InlineKeyboardButton(
-                text="✅ Я подписался! Проверить",
+                text="✅ Проверить подписку",
                 callback_data="check_subscription"
             )
         ],

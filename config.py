@@ -42,7 +42,7 @@ class Config:
     GIFT_FILE_PATH = os.getenv('GIFT_FILE_PATH')
 
     # Текст подарка (если используется текстовый промокод)
-    GIFT_TEXT = os.getenv('GIFT_TEXT', 'Ваш промокод: THANKYOU2024')
+    GIFT_TEXT = os.getenv('GIFT_TEXT', 'DorTakFree')
 
     # Создаем директорию для данных, если она не существует
     if not os.path.exists('data'):
