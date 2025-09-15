@@ -7,7 +7,7 @@ import logging
 from config import config
 from app.keyboards.inline_kb import create_subscription_keyboard, create_contacts_keyboard
 from app.services.subscription import check_subscription
-from app.services.gift_service import has_received_gift, save_gift_recipient, get_gift_content
+from app.services.gift_service import has_received_gift, save_gift_recipient, get_gift_content, get_user_by_id
 from app.models.database import db
 
 logger = logging.getLogger(__name__)
@@ -30,10 +30,23 @@ async def cmd_start(message: Message):
         session = await db.get_session()
         try:
             # Проверяем, получал ли пользователь подарок ранее
-            if await has_received_gift(session, user_id):
+            # if await has_received_gift(session, user_id):
+            #     await message.answer(
+            #         "🎁 Вы уже получали подарок ранее! Спасибо за участие!",
+            #         reply_markup=create_contacts_keyboard()
+            #     )
+            #     return
+
+            user = await get_user_by_id(session, user_id)
+            if user:
+                promo_date = user.created_at.strftime("%d.%m.%Y")
                 await message.answer(
-                    "🎁 Вы уже получали подарок ранее! Спасибо за участие!",
-                    reply_markup=create_contacts_keyboard()
+                    f"🎁 Вы уже получали подарок ранее!\n\n"
+                    f"Ваш промокод: <b>{user.gift_code}</b>\n"
+                    f"Дата получения: {promo_date}\n\n"
+                    "Спасибо за участие! 💙",
+                    reply_markup=create_contacts_keyboard(),
+                    parse_mode="HTML"
                 )
                 return
 
@@ -79,10 +92,23 @@ async def check_subscription_callback(callback: CallbackQuery):
         session = await db.get_session()
         try:
             # Проверяем, получал ли пользователь подарок ранее
-            if await has_received_gift(session, user_id):
+            # if await has_received_gift(session, user_id):
+            #     await callback.message.answer(
+            #         "🎁 Вы уже получали подарок ранее! Спасибо за участие!",
+            #         reply_markup=create_contacts_keyboard()
+            #     )
+            #     return
+
+            user = await get_user_by_id(session, user_id)
+            if user:
+                promo_date = user.created_at.strftime("%d.%m.%Y")
                 await callback.message.answer(
-                    "🎁 Вы уже получали подарок ранее! Спасибо за участие!",
-                    reply_markup=create_contacts_keyboard()
+                    f"🎁 Вы уже получали подарок ранее!\n\n"
+                    f"Ваш промокод: <b>{user.gift_code}</b>\n"
+                    f"Дата получения: {promo_date}\n\n"
+                    "Спасибо за участие! 💙",
+                    reply_markup=create_contacts_keyboard(),
+                    parse_mode="HTML"
                 )
                 return
 
@@ -160,10 +186,24 @@ async def unknowwn_message_handler(message: Message):
         session = await db.get_session()
         try:
             # Проверяем, получал ли пользователь подарок ранее
-            if await has_received_gift(session, user_id):
+            # if await has_received_gift(session, user_id):
+            #     await message.answer(
+            #         "🤖 Это ограниченный бот. Пожалуйста, используйте доступные кнопки и команды.",
+            #         reply_markup=create_contacts_keyboard()
+            #     )
+            #     return
+
+            user = await get_user_by_id(session, user_id)
+            if user:
+                promo_date = user.created_at.strftime("%d.%m.%Y")
                 await message.answer(
-                    "🤖 Это ограниченный бот. Пожалуйста, используйте доступные кнопки и команды.",
-                    reply_markup=create_contacts_keyboard()
+                    "🤖 Это ограниченный бот. Пожалуйста, используйте доступные кнопки и команды.\n\n"
+                    f"🎁 Вы уже получали подарок ранее!\n\n"
+                    f"Ваш промокод: <b>{user.gift_code}</b>\n"
+                    f"Дата получения: {promo_date}\n\n"
+                    "Спасибо за участие! 💙",
+                    reply_markup=create_contacts_keyboard(),
+                    parse_mode="HTML"
                 )
                 return
 

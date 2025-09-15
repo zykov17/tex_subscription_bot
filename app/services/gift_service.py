@@ -104,3 +104,24 @@ async def get_all_recipients(session: AsyncSession) -> list:
     except SQLAlchemyError as e:
         logger.error(f"Ошибка при получении списка пользователей: {e}")
         return []
+
+async def get_user_by_id(session: AsyncSession, user_id: int) -> User | None:
+    """
+    Возвращает объект пользователя по user_id, если он существует
+
+    Args:
+        session: Асинхронная сессия БД
+        user_id: ID пользователя
+
+    Returns:
+        User | None: Объект пользователя или None, если не найден
+    """
+    try:
+        result = await session.execute(
+            select(User).where(User.user_id == user_id)
+        )
+        user = result.scalar_one_or_none()
+        return user
+    except SQLAlchemyError as e:
+        logger.error(f"Ошибка базы данных при получении пользователя: {e}")
+        return None
