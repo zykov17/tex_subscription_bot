@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 async def main():
     """Основная функция запуска бота"""
-    
+
     # Инициализация базы данных
     try:
         await db.init()
@@ -30,28 +30,28 @@ async def main():
     except Exception as e:
         logger.error(f"Ошибка инициализации БД: {e}")
         return
-    
+
     # Создаем экземпляр бота с настройками по умолчанию
     bot = Bot(
         token=config.BOT_TOKEN,
         default=DefaultBotProperties(parse_mode=ParseMode.HTML)
     )
-    
+
     # Создаем диспетчер
     dp = Dispatcher()
-    
+
     # Включаем роутеры
-    dp.include_router(user_router)
     dp.include_router(admin_router)
-    
+    dp.include_router(user_router)
+
     # Запускаем опрос обновлений
     try:
         logger.info("Бот запущен")
         await dp.start_polling(bot)
-    
+
     except Exception as e:
         logger.error(f"Ошибка при работе бота: {e}")
-    
+
     finally:
         # Закрываем соединение с БД при завершении
         await db.close()
